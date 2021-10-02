@@ -2,6 +2,7 @@
 
 (def white [230 230 230])
 (def grey [57 57 58])
+(def dark-blue [51 101 138])
 
 (defn unclick-all-buttons
   [{:keys [current-scene] :as state}]

@@ -1,10 +1,10 @@
 * THINGS TO DO
 
+** TODO decide on colour scheme
+
 ** TODO Make menu a bit jazzier
 *** make buttons start to vibrate on hover?
 *** make some of the title letters randomly explode?
-
-** TODO credits scene
 
 ** TODO test tube sprite
 *** chemicals can change colour
@@ -28,10 +28,15 @@
 **** glass clink(s)
 **** water drop(s)
 
-* stretch goals
-** implement advanced actions?
-*** pressure?
-*** shake stirring?
-** implement advanced graphs?
-*** temperature/pressure 2d graph?
-*** crystallisation/precipitation mini window?
+** STRETCH GOALS
+*** implement advanced actions?
+**** pressure?
+**** shake stirring?
+*** implement advanced graphs?
+**** temperature/pressure 2d graph?
+**** crystallisation/precipitation mini window?
+
+
+
+** DONE credits scene
+   CLOSED: [2021-10-02 Sat 10:07]
