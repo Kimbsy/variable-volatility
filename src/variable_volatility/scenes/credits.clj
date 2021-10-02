@@ -8,8 +8,8 @@
 
 (defn draw-credits
   [state]
-  (qpu/background common/white)
-  (qpu/stroke common/grey)
+  (qpu/background common/dark-grey)
+  (qpu/stroke common/dark-green)
   (q/stroke-weight 5)
   (qpu/fill common/white)
 
@@ -31,25 +31,28 @@
   []
   [(qpsprite/text-sprite "Thanks for playing!" [(* 0.5 (q/width))
                                                 (* 0.3 (q/height))]
+                         :color common/dark-green
                          :font qpu/bold-font
                          :size qpu/large-text-size)
    (qpsprite/text-sprite "Gameplay and art:" [(* 0.5 (q/width))
-                                              (* 0.4 (q/height))])
+                                              (* 0.4 (q/height))]
+                         :color common/dark-green)
    (qpsprite/text-sprite "Dave Kimber" [(* 0.5 (q/width))
                                         (* 0.45 (q/height))]
-                         :color common/dark-blue
+                         :color common/hot-pink
                          :font qpu/bold-font)
 
    (qpsprite/text-sprite "Music:" [(* 0.5 (q/width))
-                                   (* 0.55 (q/height))])
+                                   (* 0.55 (q/height))]
+                         :color common/dark-green)
    (qpsprite/text-sprite "PJ Kimber" [(* 0.5 (q/width))
                                       (* 0.6 (q/height))]
-                         :color common/dark-blue
+                         :color common/purple
                          :font qpu/bold-font)
    (qpbutton/button-sprite "Menu"
                            [(* 0.5 (q/width))
                             (* 0.72 (q/height))]
-                           :color common/grey
+                           :color common/dark-grey
                            :content-color common/white
                            :on-click on-click-menu)])
 

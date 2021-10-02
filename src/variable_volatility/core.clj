@@ -12,7 +12,7 @@
   {})
 
 (defn cleanup
-  []
+  [state]
   (qpsound/stop-music)
   #_(System/exit 0))
 

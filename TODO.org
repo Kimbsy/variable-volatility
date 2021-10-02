@@ -1,11 +1,5 @@
 * THINGS TO DO
 
-** TODO decide on colour scheme
-
-** TODO Make menu a bit jazzier
-*** make buttons start to vibrate on hover?
-*** make some of the title letters randomly explode?
-
 ** TODO test tube sprite
 *** chemicals can change colour
 *** chemicals can fizz/boil
@@ -26,6 +20,10 @@
 *** glass clink(s)
 *** water drop(s)
 
+** TODO Make menu a bit jazzier
+*** make buttons start to vibrate on hover?
+*** make some of the title letters randomly explode?
+
 ** intro scene
 
 ** instructions in-game
@@ -40,10 +38,12 @@
 
 
 
+** DONE credits scene
+   CLOSED: [2021-10-02 Sat 10:07]
 ** DONE music
    CLOSED: [2021-10-02 Sat 10:49]
 *** see what PJ's got
 *** menu: Dance Teacher
 *** game: Strut
-** DONE credits scene
-   CLOSED: [2021-10-02 Sat 10:07]
+** DONE decide on colour scheme
+   CLOSED: [2021-10-02 Sat 16:55]

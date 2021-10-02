@@ -1,8 +1,12 @@
 (ns variable-volatility.common)
 
-(def white [230 230 230])
-(def grey [57 57 58])
-(def dark-blue [51 101 138])
+(def white [192 214 223])
+(def dark-grey [57 57 58])
+(def dark-green [23 33 33])
+(def hot-pink [255 87 159])
+(def purple [111 45 189])
+(def yellow-green [186 183 0])
+(def turquoise [65 234 212])
 
 (defn unclick-all-buttons
   [{:keys [current-scene] :as state}]
