@@ -2,6 +2,7 @@
   (:require [variable-volatility.common :as common]
             [quil.core :as q]
             [quip.scene :as qpscene]
+            [quip.sound :as qpsound]
             [quip.sprite :as qpsprite]
             [quip.sprites.button :as qpbutton]
             [quip.utils :as qpu]))
@@ -32,6 +33,8 @@
   (qpscene/transition state :level-01
                       :transition-length 30
                       :init-fn (fn [state]
+                                 (qpsound/stop-music)
+                                 (qpsound/loop-music "music/Strut.wav")
                                  (common/unclick-all-buttons state))))
 
 (defn on-click-credits

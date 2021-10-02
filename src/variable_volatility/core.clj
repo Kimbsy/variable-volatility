@@ -8,6 +8,7 @@
 
 (defn setup
   []
+  (qpsound/loop-music "music/Dance Teacher.wav")
   {})
 
 (defn cleanup

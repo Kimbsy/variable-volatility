@@ -18,15 +18,17 @@
 *** pH scale
 *** temperature
 
-** TODO sound
-*** see what PJ's got
-*** TODO make some sound effects
-**** heating
-**** cooling
-**** instability
-**** explosion
-**** glass clink(s)
-**** water drop(s)
+** TODO make some sound effects
+*** heating
+*** cooling
+*** instability
+*** explosion
+*** glass clink(s)
+*** water drop(s)
+
+** intro scene
+
+** instructions in-game
 
 ** STRETCH GOALS
 *** implement advanced actions?
@@ -38,5 +40,10 @@
 
 
 
+** DONE music
+   CLOSED: [2021-10-02 Sat 10:49]
+*** see what PJ's got
+*** menu: Dance Teacher
+*** game: Strut
 ** DONE credits scene
    CLOSED: [2021-10-02 Sat 10:07]
