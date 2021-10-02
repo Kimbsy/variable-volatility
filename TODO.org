@@ -1,0 +1,37 @@
+* THINGS TO DO
+
+** TODO Make menu a bit jazzier
+*** make buttons start to vibrate on hover?
+*** make some of the title letters randomly explode?
+
+** TODO credits scene
+
+** TODO test tube sprite
+*** chemicals can change colour
+*** chemicals can fizz/boil
+
+** TODO implement basic actions
+*** heat/cool
+*** pH balancing
+
+** TODO implement basic graphs
+*** pH scale
+*** temperature
+
+** TODO sound
+*** see what PJ's got
+*** TODO make some sound effects
+**** heating
+**** cooling
+**** instability
+**** explosion
+**** glass clink(s)
+**** water drop(s)
+
+* stretch goals
+** implement advanced actions?
+*** pressure?
+*** shake stirring?
+** implement advanced graphs?
+*** temperature/pressure 2d graph?
+*** crystallisation/precipitation mini window?

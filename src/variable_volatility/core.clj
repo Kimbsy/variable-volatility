@@ -17,9 +17,9 @@
 
 (defn init-scenes
   []
-  {:menu (menu/init)
+  {:menu     (menu/init)
    :level-01 (level-01/init)
-   :credits (credits/init)})
+   :credits  (credits/init)})
 
 (def variable-volatility-game
   (qp/game
