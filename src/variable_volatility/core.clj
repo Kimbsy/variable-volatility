@@ -2,17 +2,18 @@
   (:gen-class)
   (:require [quip.core :as qp]
             [quip.sound :as qpsound]
+            [variable-volatility.common :as common]
             [variable-volatility.scenes.menu :as menu]
             [variable-volatility.scenes.credits :as credits]
             [variable-volatility.scenes.level-01 :as level-01]))
 
 (defn setup
   []
-;;  (qpsound/loop-music "music/Dance Teacher.wav")
+  ;; (qpsound/loop-music "music/Dance Teacher.wav")
   {:values    {:temperature common/starting-temperature
                :pH          7
                :pressure    1}
-   :modifiers [{:field     :temperature
+   :modifiers [#_{:field     :temperature
                 :update-fn (fn [t]
                              (max common/min-temperature
                                   (min common/max-temperature
@@ -36,7 +37,7 @@
     :setup          setup
     :on-close       cleanup
     :init-scenes-fn init-scenes
-    :current-scene  :level-01}))
+    :current-scene  :menu}))
 
 (defn -main
   [& args]

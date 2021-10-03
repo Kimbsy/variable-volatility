@@ -4,7 +4,9 @@
 *** DONE heat/cool
 *** pH balancing
 
-** TODO make actions modify state
+** TODO make state modify droplet movement/color
+
+** TODO add gloabl state modifiers over time to increase difficulty
 
 ** TODO implement basic graphs
 *** pH scale
@@ -51,3 +53,5 @@
    CLOSED: [2021-10-03 Sun 10:48]
 *** DONE chemicals can fizz/boil
 *** DONE chemicals can change colour
+** DONE make actions modify state
+   CLOSED: [2021-10-03 Sun 22:48]

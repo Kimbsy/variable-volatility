@@ -69,6 +69,31 @@
                           s))
                       sprites)))))
 
+(defn apply-fire
+  [{:keys [current-scene] :as state}]
+  (let [fire-sprite (->> (get-in state [:scenes current-scene :sprites])
+                         (filter #(= :fire (:sprite-group %)))
+                         first)]
+    (if (= :active (:current-animation fire-sprite))
+      (update-in state [:values :temperature] (fn [t]
+                                                (max common/min-temperature
+                                                     (min common/max-temperature
+                                                          (+ t 0.2)))))
+      state)))
+
+(defn apply-ice
+  [{:keys [current-scene] :as state}]
+  (let [ice-sprite (->> (get-in state [:scenes current-scene :sprites])
+                         (filter #(= :ice (:sprite-group %)))
+                         first)]
+    (if (= :active (:current-animation ice-sprite))
+      (update-in state [:values :temperature] (fn [t]
+                                                (max common/min-temperature
+                                                     (min common/max-temperature
+                                                          (- t 0.2)))))
+      state)))
+
+
 (def update-mappings
   {:thermometer    :temperature
    :ph-strip       :ph
@@ -92,6 +117,8 @@
   (-> state
       handle-fire
       handle-ice
+      apply-fire
+      apply-ice
       common/update-values
       update-graphs
       qpscene/update-scene-sprites
@@ -100,7 +127,8 @@
 
 (defn sprites
   []
-  [(apply solution/update-color (solution/->solution) common/hot-pink)
+  [#_(apply solution/update-color (solution/->solution) common/hot-pink)
+   (solution/->solution)
    (ice/->ice)
    (fire/->fire)
    (acid/->acid)
@@ -134,7 +162,7 @@
 
 (defn init
   []
-  {:sprites   (sprites)
-   :delays    (delays)
-   :draw-fn   draw-level-01
-   :update-fn update-level-01})
+  {:sprites          (sprites)
+   :delays           (delays)
+   :draw-fn          draw-level-01
+   :update-fn        update-level-01})
