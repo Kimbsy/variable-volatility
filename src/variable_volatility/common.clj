@@ -18,3 +18,10 @@
                   (concat non-buttons
                           (map #(assoc % :held? false)
                                buttons))))))
+
+(defn update-values
+  [{:keys [modifiers] :as state}]
+  (reduce (fn [{:keys [field update-fn]} acc]
+            (update-in acc [:values field] update-fn))
+          state
+          modifiers))

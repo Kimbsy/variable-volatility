@@ -8,8 +8,11 @@
 
 (defn setup
   []
-  #_(qpsound/loop-music "music/Dance Teacher.wav")
-  {})
+;;  (qpsound/loop-music "music/Dance Teacher.wav")
+  {:values    {:temperature 27
+               :pH          7
+               :pressure    1}
+   :modifiers []})
 
 (defn cleanup
   [state]
@@ -29,7 +32,7 @@
     :setup          setup
     :on-close       cleanup
     :init-scenes-fn init-scenes
-    :current-scene  :level-01}))
+    :current-scene  :menu}))
 
 (defn -main
   [& args]
