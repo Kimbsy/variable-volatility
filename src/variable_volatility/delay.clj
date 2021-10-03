@@ -1,13 +1,14 @@
 (ns variable-volatility.delay)
 
 (defn ->delay
-  [remaining f]
-  {:remaining remaining
-   :on-complete-fn f})
+  [remaining f & {:keys [tag] :or {tag :none}}]
+  {:remaining      remaining
+   :on-complete-fn f
+   :tag            tag})
 
 (defn add-delay
-  [{:keys [current-scene] :as state} remaining f]
-  (let [delay (->delay remaining f)
+  [{:keys [current-scene] :as state} remaining f & {:keys [tag] :or {tag :none}}]
+  (let [delay (->delay remaining f :tag tag)
         path [:scenes current-scene :delays]]
     (if (seq (get-in state path))
       (update-in state path conj delay)

@@ -18,23 +18,6 @@
   (qpu/background common/dark-grey)
   (qpscene/draw-scene-sprites state))
 
-(defn cold-action
-  [state]
-  (prn "cold")
-  state)
-
-(defn hot-action
-  [state]
-  (prn "hot")
-  state)
-
-(defn adjust-temp
-  [{:keys [held-keys] :as state}]
-  (cond-> state
-    (held-keys :c) (cold-action)
-    (held-keys :h) (hot-action)
-    ))
-
 (defn increase-y
   [[x y] & {:keys [upper lower]
             :or {upper 0.7
@@ -84,8 +67,8 @@
 (defn apply-ice
   [{:keys [current-scene] :as state}]
   (let [ice-sprite (->> (get-in state [:scenes current-scene :sprites])
-                         (filter #(= :ice (:sprite-group %)))
-                         first)]
+                        (filter #(= :ice (:sprite-group %)))
+                        first)]
     (if (= :active (:current-animation ice-sprite))
       (update-in state [:values :temperature] (fn [t]
                                                 (max common/min-temperature
@@ -128,29 +111,29 @@
 (defn sprites
   []
   [#_(apply solution/update-color (solution/->solution) common/hot-pink)
+   (acid/->acid)
+   (base/->base)
    (solution/->solution)
    (ice/->ice)
    (fire/->fire)
-   (acid/->acid)
-   (base/->base)
    (thermometer/->thermometer)])
 
 (defn delays
   []
   (let [initial-delay 100
         delays [] #_ [[0 hello]
-                [1 nice]
-                [1 bubbling]
-                [1 calm]
-                [1 uh-oh]
-                [1 too-hot]
-                [1 c-to-cool]
-                [1 hmm]
-                [1 too-cold]
-                [1 h-to-heat]
-                [1 monitor-temp]
-                [1 keep-it-here]
-                [1 nice]]]
+                      [1 nice]
+                      [1 bubbling]
+                      [1 calm]
+                      [1 uh-oh]
+                      [1 too-hot]
+                      [1 c-to-cool]
+                      [1 hmm]
+                      [1 too-cold]
+                      [1 h-to-heat]
+                      [1 monitor-temp]
+                      [1 keep-it-here]
+                      [1 nice]]]
     (:ds (reduce (fn [{:keys [ds curr] :as acc}
                       [d f]]
                    (-> acc
@@ -160,9 +143,73 @@
                   :curr initial-delay}
                  delays))))
 
+(defn handle-acid
+  [{:keys [current-scene] :as state} e]
+  (if (= :a (:key e))
+    (-> state
+        (update-in [:values :ph] (fn [ph]
+                                   (max common/min-ph
+                                        (min common/max-ph
+                                             (dec ph)))))
+        (update-in [:scenes current-scene :sprites]
+                   (fn [sprites]
+                     (map (fn [s]
+                            (if (= :acid (:sprite-group s))
+                              (qpsprite/set-animation s :active)
+                              s))
+                          sprites)))
+        (update-in [:scenes current-scene :delays]
+                   (fn [ds]
+                     (filter #(not= :acid (:tag %)) ds)))
+        (delay/add-delay 20
+                         (fn [state]
+                           (update-in state
+                                      [:scenes current-scene :sprites]
+                                      (fn [sprites]
+                                        (map (fn [s]
+                                               (if (= :acid (:sprite-group s))
+                                                 (qpsprite/set-animation s :none)
+                                                 s))
+                                             sprites))))
+                         :tag :acid))
+    state))
+
+(defn handle-base
+  [{:keys [current-scene] :as state} e]
+  (if (= :b (:key e))
+    (-> state
+        (update-in [:values :ph] (fn [ph]
+                                   (max common/min-ph
+                                        (min common/max-ph
+                                             (inc ph)))))
+        (update-in [:scenes current-scene :sprites]
+                   (fn [sprites]
+                     (map (fn [s]
+                            (if (= :base (:sprite-group s))
+                              (qpsprite/set-animation s :active)
+                              s))
+                          sprites)))
+        (update-in [:scenes current-scene :delays]
+                   (fn [ds]
+                     (filter #(not= :base (:tag %)) ds)))
+        (delay/add-delay 20
+                         (fn [state]
+                           (update-in state
+                                      [:scenes current-scene :sprites]
+                                      (fn [sprites]
+                                        (map (fn [s]
+                                               (if (= :base (:sprite-group s))
+                                                 (qpsprite/set-animation s :none)
+                                                 s))
+                                             sprites))))
+                         :tag :base))
+    state))
+
 (defn init
   []
   {:sprites          (sprites)
    :delays           (delays)
    :draw-fn          draw-level-01
-   :update-fn        update-level-01})
+   :update-fn        update-level-01
+   :key-pressed-fns [handle-acid
+                     handle-base]})
