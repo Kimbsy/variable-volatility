@@ -6,9 +6,11 @@
             [quip.utils :as qpu]
             [variable-volatility.common :as common]
             [variable-volatility.delay :as delay]
+            [variable-volatility.sprites.acid :as acid]
+            [variable-volatility.sprites.base :as base]
             [variable-volatility.sprites.fire :as fire]
             [variable-volatility.sprites.ice :as ice]
-            [variable-volatility.sprites.solution :as solution]))
+[variable-volatility.sprites.solution :as solution]))
 
 (defn draw-level-01
   [state]
@@ -80,7 +82,9 @@
   []
   [(apply solution/update-color (solution/->solution) common/hot-pink)
    (ice/->ice)
-   (fire/->fire)])
+   (fire/->fire)
+   (acid/->acid)
+   (base/->base)])
 
 (defn delays
   []
