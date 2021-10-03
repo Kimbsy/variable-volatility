@@ -1,9 +1,5 @@
 * THINGS TO DO
 
-** TODO test tube sprite
-*** chemicals can change colour
-*** chemicals can fizz/boil
-
 ** TODO implement basic actions
 *** heat/cool
 *** pH balancing
@@ -47,3 +43,7 @@
 *** game: Strut
 ** DONE decide on colour scheme
    CLOSED: [2021-10-02 Sat 16:55]
+** DONE test tube sprite
+   CLOSED: [2021-10-03 Sun 10:48]
+*** DONE chemicals can fizz/boil
+*** DONE chemicals can change colour

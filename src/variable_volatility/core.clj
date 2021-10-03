@@ -8,7 +8,7 @@
 
 (defn setup
   []
-  (qpsound/loop-music "music/Dance Teacher.wav")
+  #_(qpsound/loop-music "music/Dance Teacher.wav")
   {})
 
 (defn cleanup
@@ -29,7 +29,7 @@
     :setup          setup
     :on-close       cleanup
     :init-scenes-fn init-scenes
-    :current-scene  :menu}))
+    :current-scene  :level-01}))
 
 (defn -main
   [& args]

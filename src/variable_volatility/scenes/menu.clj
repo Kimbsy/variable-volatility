@@ -45,8 +45,8 @@
   (qpscene/transition state :level-01
                       :transition-length 30
                       :init-fn (fn [state]
-                                 (qpsound/stop-music)
-                                 (qpsound/loop-music "music/Strut.wav")
+                                 ;; (qpsound/stop-music)
+                                 ;; (qpsound/loop-music "music/Strut.wav")
                                  (common/unclick-all-buttons state))))
 
 (defn on-click-credits
