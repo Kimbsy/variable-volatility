@@ -8,6 +8,13 @@
 (def yellow-green [186 183 0])
 (def turquoise [65 234 212])
 
+(def starting-temperature 21)
+(def max-temperature 46)
+(def min-temperature 0)
+(def starting-ph 7)
+(def max-ph 14)
+(def min-ph 1)
+
 (defn unclick-all-buttons
   [{:keys [current-scene] :as state}]
   (let [sprites     (get-in state [:scenes current-scene :sprites])
@@ -21,7 +28,7 @@
 
 (defn update-values
   [{:keys [modifiers] :as state}]
-  (reduce (fn [{:keys [field update-fn]} acc]
+  (reduce (fn [acc{:keys [field update-fn]}]
             (update-in acc [:values field] update-fn))
           state
           modifiers))

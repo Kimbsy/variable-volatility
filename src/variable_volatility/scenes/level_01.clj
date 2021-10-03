@@ -10,7 +10,8 @@
             [variable-volatility.sprites.base :as base]
             [variable-volatility.sprites.fire :as fire]
             [variable-volatility.sprites.ice :as ice]
-[variable-volatility.sprites.solution :as solution]))
+            [variable-volatility.sprites.solution :as solution]
+            [variable-volatility.sprites.thermometer :as thermometer]))
 
 (defn draw-level-01
   [state]
@@ -68,12 +69,31 @@
                           s))
                       sprites)))))
 
+(def update-mappings
+  {:thermometer    :temperature
+   :ph-strip       :ph
+   :pressure-gauge :pressure})
+
+(defn update-graph
+  [{:keys [sprite-group] :as s} values]
+  (if ((set (keys update-mappings)) sprite-group)
+    (let [field (sprite-group update-mappings)]
+      (assoc s field (field values)))
+    s))
+
+(defn update-graphs
+  [{:keys [current-scene values] :as state}]
+  (update-in state [:scenes current-scene :sprites]
+             (fn [sprites]
+               (map #(update-graph % values) sprites))))
+
 (defn update-level-01
   [state]
   (-> state
       handle-fire
       handle-ice
       common/update-values
+      update-graphs
       qpscene/update-scene-sprites
       qptween/update-sprite-tweens
       delay/update-delays))
@@ -84,7 +104,8 @@
    (ice/->ice)
    (fire/->fire)
    (acid/->acid)
-   (base/->base)])
+   (base/->base)
+   (thermometer/->thermometer)])
 
 (defn delays
   []

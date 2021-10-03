@@ -1,12 +1,16 @@
 * THINGS TO DO
 
 ** TODO implement basic actions
-*** heat/cool
+*** DONE heat/cool
 *** pH balancing
+
+** TODO make actions modify state
 
 ** TODO implement basic graphs
 *** pH scale
-*** temperature
+*** DONE temperature
+
+** TODO make going out of bounds for too long end the game
 
 ** TODO make some sound effects
 *** heating

@@ -9,10 +9,14 @@
 (defn setup
   []
 ;;  (qpsound/loop-music "music/Dance Teacher.wav")
-  {:values    {:temperature 27
+  {:values    {:temperature common/starting-temperature
                :pH          7
                :pressure    1}
-   :modifiers []})
+   :modifiers [{:field     :temperature
+                :update-fn (fn [t]
+                             (max common/min-temperature
+                                  (min common/max-temperature
+                                       (- t 0.1))))}]})
 
 (defn cleanup
   [state]
