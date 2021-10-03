@@ -42,7 +42,7 @@
     :setup          setup
     :on-close       cleanup
     :init-scenes-fn init-scenes
-    :current-scene  :menu}))
+    :current-scene  :level-01}))
 
 (defn -main
   [& args]

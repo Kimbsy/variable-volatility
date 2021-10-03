@@ -13,7 +13,7 @@
 (def min-temperature 0)
 (def starting-ph 7)
 (def max-ph 14)
-(def min-ph 1)
+(def min-ph 0)
 
 (defn unclick-all-buttons
   [{:keys [current-scene] :as state}]

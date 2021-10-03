@@ -11,7 +11,6 @@
 (defn draw-needle
   [{[x y] :pos :keys [w h temperature]}]
   (qpu/fill qpu/red)
-  #_(q/rect (- x (/ w 2) 3) (+ y (/ h 2)) 10 10)
   (let [base-y (- (+ y (/ h 2)) 10)
         y-off (- (* temperature 6))]
     (q/triangle (- x (/ w 2) 3) (+ base-y y-off)

@@ -10,6 +10,7 @@
             [variable-volatility.sprites.base :as base]
             [variable-volatility.sprites.fire :as fire]
             [variable-volatility.sprites.ice :as ice]
+            [variable-volatility.sprites.ph-scale :as ph-scale]
             [variable-volatility.sprites.solution :as solution]
             [variable-volatility.sprites.thermometer :as thermometer]))
 
@@ -79,7 +80,7 @@
 
 (def update-mappings
   {:thermometer    :temperature
-   :ph-strip       :ph
+   :ph-scale       :ph
    :pressure-gauge :pressure})
 
 (defn update-graph
@@ -116,7 +117,8 @@
    (solution/->solution)
    (ice/->ice)
    (fire/->fire)
-   (thermometer/->thermometer)])
+   (thermometer/->thermometer)
+   (ph-scale/->ph-scale)])
 
 (defn delays
   []
@@ -150,7 +152,7 @@
         (update-in [:values :ph] (fn [ph]
                                    (max common/min-ph
                                         (min common/max-ph
-                                             (dec ph)))))
+                                             (- ph 2)))))
         (update-in [:scenes current-scene :sprites]
                    (fn [sprites]
                      (map (fn [s]
@@ -181,7 +183,7 @@
         (update-in [:values :ph] (fn [ph]
                                    (max common/min-ph
                                         (min common/max-ph
-                                             (inc ph)))))
+                                             (+ ph 2)))))
         (update-in [:scenes current-scene :sprites]
                    (fn [sprites]
                      (map (fn [s]
