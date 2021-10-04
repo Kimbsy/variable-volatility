@@ -1,18 +1,10 @@
 * THINGS TO DO
 
-** TODO implement basic actions
-*** DONE heat/cool
-*** pH balancing
-
 ** TODO make state modify droplet movement/color
 
-** TODO add gloabl state modifiers over time to increase difficulty
-
-** TODO implement basic graphs
-*** pH scale
-*** DONE temperature
-
 ** TODO make going out of bounds for too long end the game
+
+** TODO add global state modifiers over time to increase difficulty
 
 ** TODO make some sound effects
 *** heating
@@ -27,8 +19,8 @@
 *** make some of the title letters randomly explode?
 
 ** intro scene
-
-** instructions in-game
+*** have actions be added to the game as you progress
+*** doesn't need to be it's own scene necessarily
 
 ** STRETCH GOALS
 *** implement advanced actions?
@@ -55,3 +47,11 @@
 *** DONE chemicals can change colour
 ** DONE make actions modify state
    CLOSED: [2021-10-03 Sun 22:48]
+** DONE implement basic actions
+   CLOSED: [2021-10-04 Mon 09:26]
+*** DONE heat/cool
+*** DONE pH balancing
+** DONE implement basic graphs
+   CLOSED: [2021-10-04 Mon 09:26]
+*** DONE pH scale
+*** DONE temperature
