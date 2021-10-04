@@ -32,26 +32,30 @@
   [x (max (min (- y 4) (* lower (q/height))) (* upper (q/height)))])
 
 (defn handle-fire
-  [{:keys [held-keys current-scene] :as state}]
-  (let [modify (if (held-keys :h) decrease-y increase-y)]
-    (update-in state [:scenes current-scene :sprites]
-               (fn [sprites]
-                 (map (fn [{:keys [sprite-group] :as s}]
-                        (if (= :fire sprite-group)
-                          (update s :pos modify)
-                          s))
-                      sprites)))))
+  [{:keys [playing? held-keys current-scene] :as state}]
+  (if playing?
+    (let [modify (if (held-keys :h) decrease-y increase-y)]
+      (update-in state [:scenes current-scene :sprites]
+                 (fn [sprites]
+                   (map (fn [{:keys [sprite-group] :as s}]
+                          (if (= :fire sprite-group)
+                            (update s :pos modify)
+                            s))
+                        sprites))))
+    state))
 
 (defn handle-ice
-  [{:keys [held-keys current-scene] :as state}]
-  (let [modify (if (held-keys :c) decrease-y increase-y)]
-    (update-in state [:scenes current-scene :sprites]
-               (fn [sprites]
-                 (map (fn [{:keys [sprite-group] :as s}]
-                        (if (= :ice sprite-group)
-                          (update s :pos modify)
-                          s))
-                      sprites)))))
+  [{:keys [playing? held-keys current-scene] :as state}]
+  (if playing?
+    (let [modify (if (held-keys :c) decrease-y increase-y)]
+      (update-in state [:scenes current-scene :sprites]
+                 (fn [sprites]
+                   (map (fn [{:keys [sprite-group] :as s}]
+                          (if (= :ice sprite-group)
+                            (update s :pos modify)
+                            s))
+                        sprites))))
+    state))
 
 (defn apply-fire
   [{:keys [current-scene] :as state}]
@@ -96,7 +100,7 @@
              (fn [sprites]
                (map #(update-graph % values) sprites))))
 
-(defn modify-activity
+(defn modify-solution-activity
   [{:keys [current-scene] :as state} amount]
   (update-in state [:scenes current-scene :sprites]
              (fn [sprites]
@@ -114,7 +118,7 @@
                         s))
                     sprites))))
 
-(defn update-solution-activity
+(defn update-activity
   [{:keys [current-scene values] :as state}]
   (let [temp-mod (if (< 14 (:temperature values) 32)
                    -3 ; green
@@ -130,11 +134,16 @@
                    5 ; red
                    1 ; orange
                    ))]
-    (modify-activity state (+ temp-mod ph-mod))))
+    (-> state
+        (update :activity (fn [a]
+                             (max common/min-activity
+                                  (min common/max-activity
+                                       (+ a (/ (+ temp-mod ph-mod) 50))))))
+        (modify-solution-activity (+ temp-mod ph-mod)))))
 
 (defn update-solution-color
-  [{:keys [current-scene global-frame values] :as state}]
-  (if (zero? (mod global-frame 100))
+  [{:keys [playing? current-scene global-frame values] :as state}]
+  (if (and playing? (zero? (mod global-frame 100)))
     (update-in state [:scenes current-scene :sprites]
                (fn [sprites]
                  (map (fn [s]
@@ -142,6 +151,48 @@
                           (apply solution/update-color s (common/get-ph-color values))
                           s))
                       sprites)))
+    state))
+
+(defn update-explosion-timer
+  [{:keys [activity] :as state}]
+  (if (< 24 activity)
+    (update state :explosion-timer dec)
+    (update state :explosion-timer (fn [t]
+                                     (min 500
+                                          (+ t 0.5))))))
+
+(defn fade-to-black-explosion
+  [state progress limit]
+  (when (= 140 progress)
+    ;; play explosion
+    (prn "BANG")
+    )
+  (q/fill 0 (int (* 255 (/ progress limit))))
+  (q/rect 0 0 (q/width) (q/height)))
+
+(defn game-end
+  [{:keys [current-scene] :as state}]
+  ;; play ominous sound
+  (prn "uh oh")
+  (-> state
+      (assoc :playing? false)
+      (update-in [:scenes current-scene :sprites]
+                 (fn [sprites]
+                   (map (fn [s]
+                          (if (= :solution (:sprite-group s))
+                            (apply solution/update-color s [255 255 255])
+                            s))
+                        sprites)))
+      (delay/add-delay 100
+                       #(qpscene/transition %
+                                            :credits
+                                            :transition-length 200
+                                            :transition-fn fade-to-black-explosion))))
+
+(defn check-end
+  [{:keys [explosion-timer] :as state}]
+  (if (zero? explosion-timer)
+    (game-end state)
     state))
 
 (defn update-level-01
@@ -153,8 +204,10 @@
       apply-ice
       common/update-values
       update-graphs
-      update-solution-activity
+      update-activity
       update-solution-color
+      update-explosion-timer
+      check-end
       qpscene/update-scene-sprites
       qptween/update-sprite-tweens
       delay/update-delays))
@@ -195,8 +248,8 @@
                  delays))))
 
 (defn handle-acid
-  [{:keys [current-scene] :as state} e]
-  (if (= :a (:key e))
+  [{:keys [playing? current-scene] :as state} e]
+  (if (and playing? (= :a (:key e)))
     (-> state
         (update-in [:values :ph] (fn [ph]
                                    (max common/min-ph
@@ -226,8 +279,8 @@
     state))
 
 (defn handle-base
-  [{:keys [current-scene] :as state} e]
-  (if (= :b (:key e))
+  [{:keys [playing? current-scene] :as state} e]
+  (if (and playing? (= :b (:key e)))
     (-> state
         (update-in [:values :ph] (fn [ph]
                                    (max common/min-ph

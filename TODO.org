@@ -1,6 +1,6 @@
 * THINGS TO DO
 
-** TODO make going out of bounds for too long end the game
+** TODO reset game state when leaving credits screen
 
 ** TODO add global state modifiers over time to increase difficulty
 
@@ -57,3 +57,5 @@
    CLOSED: [2021-10-04 Mon 10:34]
 ** DONE make state modify solution colour
    CLOSED: [2021-10-04 Mon 11:00]
+** DONE make going out of bounds for too long end the game
+   CLOSED: [2021-10-04 Mon 11:51]
