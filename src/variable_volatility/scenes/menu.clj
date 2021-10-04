@@ -12,30 +12,35 @@
   [(qpsprite/text-sprite "V"
                          [(- (* 0.02 (q/width)) 3)
                           (- -40 3)]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :size 400
                          :color common/hot-pink
                          :offsets [:left :top])
    (qpsprite/text-sprite "V"
                          [(+ (* 0.02 (q/width)) 3)
                           (+ -40 3)]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :size 400
                          :color common/yellow-green
                          :offsets [:left :top])
    (qpsprite/text-sprite "V"
                          [(* 0.02 (q/width))
                           -40]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :size 400
                          :color common/white
                          :offsets [:left :top])
    (qpsprite/text-sprite "  ariable"
                          [(* 0.1 (q/width))
                           70]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :size qpu/title-text-size
                          :color common/white
                          :offsets [:left :top])
    (qpsprite/text-sprite "  olatility"
                          [(* 0.07 (q/width))
                           190]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :size qpu/title-text-size
                          :color common/white
                          :offsets [:left :top])])
@@ -69,18 +74,21 @@
   [(qpbutton/button-sprite "Play"
                            [(* 0.2 (q/width))
                             (button-y)]
+                           :font "font/UbuntuMono-Regular.ttf"
                            :color common/white
                            :content-color common/dark-green
                            :on-click on-click-play)
    (qpbutton/button-sprite "Credits"
                            [(* 0.5 (q/width))
                             (button-y)]
+                           :font "font/UbuntuMono-Regular.ttf"
                            :color common/white
                            :content-color common/dark-green
                            :on-click on-click-credits)
    (qpbutton/button-sprite "Quit"
                            [(* 0.8 (q/width))
                             (button-y)]
+                           :font "font/UbuntuMono-Regular.ttf"
                            :color common/white
                            :content-color common/dark-green
                            :on-click on-click-quit)])

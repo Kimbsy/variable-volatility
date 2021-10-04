@@ -70,3 +70,6 @@
    CLOSED: [2021-10-04 Mon 18:13]
 *** DONE have actions be added to the game as you progress
 *** doesn't need to be it's own scene necessarily
+
+** DONE include font with game
+   CLOSED: [2021-10-04 Mon 19:06]

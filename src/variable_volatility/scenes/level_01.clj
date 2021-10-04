@@ -252,6 +252,7 @@
    (ph-scale/->ph-scale)
    (qpsprite/text-sprite ""
                          [(* 0.3 (q/width)) (* 0.5 (q/height))]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :sprite-group :conversation
                          :color common/white)])
 
@@ -325,6 +326,7 @@
 
 (def initial-delay 100)
 (def clear [200 clear-text])
+(def quick-clear [100 clear-text])
 
 (defn delays
   []
@@ -534,9 +536,9 @@
   (update state :modifiers
           conj {:field     :ph
                 :update-fn (fn [t]
-                             (max common/min-temperature
-                                  (min common/max-temperature
-                                       (+ t 0.05))))}))
+                             (max common/min-ph
+                                  (min common/max-ph
+                                       (+ t 0.01))))}))
 
 (defn after-fire-delays
   []
@@ -552,17 +554,17 @@
                 [120 not-green]
                 clear
                 [80 ah]
-                clear
+                quick-clear
                 [50 ok]
-                clear
+                quick-clear
                 [50 dont-worry]
-                clear
+                quick-clear
                 [50 i-know]
-                clear
+                quick-clear
                 [50 obvious]
-                clear
+                quick-clear
                 [50 very-simple]
-                clear
+                quick-clear
                 [50 acid]
                 [0 show-ph]
                 clear

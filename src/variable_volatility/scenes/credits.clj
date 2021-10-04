@@ -43,27 +43,31 @@
   []
   [(qpsprite/text-sprite "Thanks for playing!" [(* 0.5 (q/width))
                                                 (* 0.3 (q/height))]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :color common/dark-green
                          :font qpu/bold-font
                          :size qpu/large-text-size)
    (qpsprite/text-sprite "Gameplay and art:" [(* 0.5 (q/width))
                                               (* 0.4 (q/height))]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :color common/dark-green)
    (qpsprite/text-sprite "Dave Kimber" [(* 0.5 (q/width))
                                         (* 0.45 (q/height))]
                          :color common/hot-pink
-                         :font qpu/bold-font)
+                         :font "font/UbuntuMono-Bold.ttf")
 
    (qpsprite/text-sprite "Music:" [(* 0.5 (q/width))
                                    (* 0.55 (q/height))]
+                         :font "font/UbuntuMono-Regular.ttf"
                          :color common/dark-green)
    (qpsprite/text-sprite "PJ Kimber" [(* 0.5 (q/width))
                                       (* 0.6 (q/height))]
                          :color common/purple
-                         :font qpu/bold-font)
+                         :font "font/UbuntuMono-Bold.ttf")
    (qpbutton/button-sprite "Menu"
                            [(* 0.5 (q/width))
                             (* 0.72 (q/height))]
+                           :font "font/UbuntuMono-Regular.ttf"
                            :color common/dark-grey
                            :content-color common/white
                            :on-click on-click-menu)])
