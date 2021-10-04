@@ -187,7 +187,7 @@
                             s))
                         sprites)))
       (delay/add-delay
-       50
+       80
        (fn [state]
          (qpscene/transition state
                              :credits

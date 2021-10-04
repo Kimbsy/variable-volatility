@@ -1,7 +1,5 @@
 * THINGS TO DO
 
-** TODO reset game state when leaving credits screen
-
 ** TODO add global state modifiers over time to increase difficulty
 
 ** TODO Make menu a bit jazzier
@@ -58,3 +56,5 @@
 *** DONE instability
 *** DONE explosion
 *** DONE water drop(s)
+** DONE reset game state when leaving credits screen
+   CLOSED: [2021-10-04 Mon 14:02]

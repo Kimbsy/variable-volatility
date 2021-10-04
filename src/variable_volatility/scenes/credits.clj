@@ -4,7 +4,8 @@
             [quip.sprite :as qpsprite]
             [quip.sprites.button :as qpbutton]
             [quip.utils :as qpu]
-            [variable-volatility.common :as common]))
+            [variable-volatility.common :as common]
+            [variable-volatility.scenes.level-01 :as level-01]))
 
 (defn draw-credits
   [state]
@@ -22,10 +23,20 @@
 
 (defn on-click-menu
   [state e]
-  (qpscene/transition state :menu
-                      :transition-length 30
-                      :init-fn (fn [state]
-                                 (common/unclick-all-buttons state))))
+  (-> state
+      (assoc :activity common/starting-activity)
+      (assoc :explosion-timer 500)
+      (assoc :playing? true)
+      (assoc :values {:temperature common/starting-temperature
+                      :ph          common/starting-ph})
+      (qpscene/transition
+       :menu
+       :transition-length 30
+       :init-fn (fn [state]
+                  (-> state
+                      common/unclick-all-buttons
+                      (assoc :held-keys #{})
+                      (assoc-in [:scenes :level-01] (level-01/init)))))))
 
 (defn sprites
   []

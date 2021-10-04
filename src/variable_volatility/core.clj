@@ -14,8 +14,7 @@
    :explosion-timer 500
    :playing?        true
    :values          {:temperature common/starting-temperature
-                     :ph          7
-                     :pressure    1}
+                     :ph          common/starting-ph}
    :modifiers       [;; {:field     :temperature
                      ;;  :update-fn (fn [t]
                      ;;               (max common/min-temperature
