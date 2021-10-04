@@ -27,6 +27,7 @@
       (assoc :activity common/starting-activity)
       (assoc :explosion-timer 500)
       (assoc :playing? true)
+      (assoc :intro? true)
       (assoc :values {:temperature common/starting-temperature
                       :ph          common/starting-ph})
       (qpscene/transition

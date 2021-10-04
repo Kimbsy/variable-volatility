@@ -6,7 +6,7 @@
   []
   (-> (qpsprite/animated-sprite
        :base
-       [(* 0.61 (q/width)) (* 0.15 (q/height))]
+       [(* 0.61 (q/width)) (- (* 0.15 (q/height)) 200)]
        192 192
        "img/big-base.png"
        :animations {:none   {:frames      1

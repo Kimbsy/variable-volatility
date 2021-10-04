@@ -13,19 +13,18 @@
   {:activity        common/starting-activity
    :explosion-timer 500
    :playing?        true
+   :intro?          true
+   :auto-activity?  false
+   :auto-color?     false
+   :fire-available? false
+   :ice-available?  false
+   :acid-available? false
+   :base-available? false
+   :after-cold?     false
+   :after-fire?     false
    :values          {:temperature common/starting-temperature
                      :ph          common/starting-ph}
-   :modifiers       [;; {:field     :temperature
-                     ;;  :update-fn (fn [t]
-                     ;;               (max common/min-temperature
-                     ;;                    (min common/max-temperature
-                     ;;                         (- t 0.1))))}
-                     ;; {:field     :ph
-                     ;;  :update-fn (fn [t]
-                     ;;               (max common/min-ph
-                     ;;                    (min common/max-ph
-                     ;;                         (+ t 0.01))))}
-                     ]})
+   :modifiers       []})
 
 (defn cleanup
   [state]

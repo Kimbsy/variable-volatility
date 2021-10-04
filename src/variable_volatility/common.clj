@@ -32,15 +32,15 @@
   [{:keys [ph] :as values}]
   (qpu/lighten (get ph-colors (Math/round (float ph)))))
 
-(def starting-activity 4)
+(def starting-activity 2)
 (def max-activity 25)
 (def min-activity 2)
 
-(def starting-temperature 21)
+(def starting-temperature 35)
 (def max-temperature 46)
 (def min-temperature 0)
 
-(def starting-ph 7)
+(def starting-ph 3)
 (def max-ph 14)
 (def min-ph 0)
 
@@ -57,7 +57,7 @@
 
 (defn update-values
   [{:keys [modifiers] :as state}]
-  (reduce (fn [acc{:keys [field update-fn]}]
+  (reduce (fn [acc {:keys [field update-fn]}]
             (update-in acc [:values field] update-fn))
           state
           modifiers))

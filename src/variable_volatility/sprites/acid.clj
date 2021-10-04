@@ -6,7 +6,7 @@
   []
   (-> (qpsprite/animated-sprite
        :acid
-       [(* 0.39 (q/width)) (* 0.15 (q/height))]
+       [(* 0.39 (q/width)) (- (* 0.15 (q/height)) 200)]
        192 192
        "img/big-acid.png"
        :animations {:none   {:frames      1

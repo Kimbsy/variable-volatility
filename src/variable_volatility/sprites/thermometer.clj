@@ -33,16 +33,17 @@
                 (- x (/ w 2) 3) (+ base-y y-off 10))))
 
 (defn draw-thermometer
-  [th]
+  [{:keys [show-target?] :as th}]
   (qpsprite/draw-image-sprite th)
-  (draw-target-zone th)
+  (when show-target?
+    (draw-target-zone th))
   (draw-needle th))
 
 (defn ->thermometer
   []
   {:sprite-group :thermometer
    :uuid         (java.util.UUID/randomUUID)
-   :pos          [(* 0.15 (q/width)) (* 0.5 (q/height))]
+   :pos          [(- (* 0.1 (q/width)) 200) (* 0.5 (q/height))]
    :rotation     0
    :vel          [0 0]
    :w            96
@@ -53,4 +54,5 @@
    :draw-fn      draw-thermometer
    :bounds-fn    qpsprite/default-bounding-poly
    :image        (q/load-image "img/big-thermometer.png")
-   :temperature  common/starting-temperature})
+   :temperature  common/starting-temperature
+   :show-target  false})

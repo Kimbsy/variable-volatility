@@ -33,8 +33,8 @@
   [x (max (min (- y 4) (* lower (q/height))) (* upper (q/height)))])
 
 (defn handle-fire
-  [{:keys [playing? held-keys current-scene] :as state}]
-  (if playing?
+  [{:keys [playing? fire-available? held-keys current-scene] :as state}]
+  (if (and playing? fire-available?)
     (let [modify (if (held-keys :h) decrease-y increase-y)]
       (update-in state [:scenes current-scene :sprites]
                  (fn [sprites]
@@ -46,8 +46,8 @@
     state))
 
 (defn handle-ice
-  [{:keys [playing? held-keys current-scene] :as state}]
-  (if playing?
+  [{:keys [playing? ice-available? held-keys current-scene] :as state}]
+  (if (and playing? ice-available?)
     (let [modify (if (held-keys :c) decrease-y increase-y)]
       (update-in state [:scenes current-scene :sprites]
                  (fn [sprites]
@@ -123,32 +123,48 @@
                         s))
                     sprites))))
 
+(defn set-solution-activity
+  [{:keys [current-scene] :as state} val]
+  (update-in state [:scenes current-scene :sprites]
+             (fn [sprites]
+               (map (fn [s]
+                      (if (= :solution (:sprite-group s))
+                        (update s :droplets
+                                (fn [ds]
+                                  (map (fn [d]
+                                         (assoc d :activity val))
+                                       ds)))
+                        s))
+                    sprites))))
+
 (defn update-activity
-  [{:keys [current-scene values] :as state}]
-  (let [temp-mod (if (< 14 (:temperature values) 32)
+  [{:keys [current-scene auto-activity? values] :as state}]
+  (if auto-activity?
+    (let [temp-mod (if (< 14 (:temperature values) 32)
+                     -3 ; green
+                     (if (or (< (:temperature values) 7)
+                             (< 39 (:temperature values)))
+                       5 ; red
+                       1 ; orange
+                       ))
+          ph-mod (if (< 4 (:ph values) 10)
                    -3 ; green
-                   (if (or (< (:temperature values) 7)
-                           (< 39 (:temperature values)))
+                   (if (or (< (:ph values) 2)
+                           (< 12 (:ph values)))
                      5 ; red
                      1 ; orange
-                     ))
-        ph-mod (if (< 4 (:ph values) 10)
-                 -3 ; green
-                 (if (or (< (:ph values) 2)
-                         (< 12 (:ph values)))
-                   5 ; red
-                   1 ; orange
-                   ))]
-    (-> state
-        (update :activity (fn [a]
-                             (max common/min-activity
-                                  (min common/max-activity
-                                       (+ a (/ (+ temp-mod ph-mod) 50))))))
-        (modify-solution-activity (+ temp-mod ph-mod)))))
+                     ))]
+      (-> state
+          (update :activity (fn [a]
+                              (max common/min-activity
+                                   (min common/max-activity
+                                        (+ a (/ (+ temp-mod ph-mod) 50))))))
+          (modify-solution-activity (+ temp-mod ph-mod))))
+    state))
 
 (defn update-solution-color
-  [{:keys [playing? current-scene global-frame values] :as state}]
-  (if (and playing? (zero? (mod global-frame 100)))
+  [{:keys [playing? auto-color? current-scene global-frame values] :as state}]
+  (if (and playing? auto-color? (zero? (mod global-frame 100)))
     (update-in state [:scenes current-scene :sprites]
                (fn [sprites]
                  (map (fn [s]
@@ -159,8 +175,8 @@
     state))
 
 (defn update-explosion-timer
-  [{:keys [activity] :as state}]
-  (if (< 24 activity)
+  [{:keys [intro? activity] :as state}]
+  (if (and (not intro?) (< 24 activity))
     (update state :explosion-timer dec)
     (update state :explosion-timer (fn [t]
                                      (min 500
@@ -203,6 +219,9 @@
     (game-end state)
     state))
 
+(declare check-cold-delays)
+(declare check-fire-delays)
+
 (defn update-level-01
   [state]
   (-> state
@@ -216,6 +235,8 @@
       update-solution-color
       update-explosion-timer
       check-end
+      check-cold-delays
+      check-fire-delays
       qpscene/update-scene-sprites
       qptween/update-sprite-tweens
       delay/update-delays))
@@ -228,36 +249,358 @@
    (ice/->ice)
    (fire/->fire)
    (thermometer/->thermometer)
-   (ph-scale/->ph-scale)])
+   (ph-scale/->ph-scale)
+   (qpsprite/text-sprite ""
+                         [(* 0.3 (q/width)) (* 0.5 (q/height))]
+                         :sprite-group :conversation
+                         :color common/white)])
+
+(defn modify-text
+  [{:keys [current-scene] :as state} f]
+  (update-in state
+             [:scenes current-scene :sprites]
+             (fn [sprites]
+               (map (fn [s]
+                      (if (= :conversation (:sprite-group s))
+                        (f s)
+                        s))
+                    sprites))))
+
+(defn hello
+  [state]
+  (modify-text state #(assoc % :content "oh hello")))
+
+(defn clear-text
+  [state]
+  (modify-text state #(assoc % :content "")))
+
+(defn nice
+  [state]
+  (modify-text state #(assoc % :content "this is nice")))
+
+(defn green
+  [state]
+  (modify-text state #(assoc % :content "mmm green")))
+
+(defn calm
+  [state]
+  (modify-text state #(assoc % :content "so calm")))
+
+(defn heating
+  [state]
+  (set-solution-activity state 10))
+
+(defn uh-oh
+  [state]
+  (modify-text state #(assoc % :content "uh oh")))
+
+(defn too-hot
+  [state]
+  (modify-text state #(assoc % :content "too hot")))
+
+(defn show-temp
+  [{:keys [current-scene] :as state}]
+  (update-in
+   state
+   [:scenes current-scene :sprites]
+   (fn [sprites]
+     (map (fn [s]
+            (if (= :thermometer (:sprite-group s))
+              (qptween/add-tween
+               s
+               (qptween/->tween
+                :pos
+                200
+                :step-count 150
+                :update-fn qptween/tween-x-fn
+                :easing-fn qptween/ease-in-elastic))
+              s))
+          sprites))))
+
+(defn c-to-cool
+  [state]
+  (-> state
+      (assoc :ice-available? true)
+      (modify-text #(assoc % :content " hold c to \n cool down"))))
+
+(def initial-delay 100)
+(def clear [200 clear-text])
 
 (defn delays
   []
-  (let [initial-delay 100
-        delays [] #_ [[0 hello]
-                      [1 nice]
-                      [1 bubbling]
-                      [1 calm]
-                      [1 uh-oh]
-                      [1 too-hot]
-                      [1 c-to-cool]
-                      [1 hmm]
-                      [1 too-cold]
-                      [1 h-to-heat]
-                      [1 monitor-temp]
-                      [1 keep-it-here]
-                      [1 nice]]]
+  (let [delays [[200 hello]
+                clear
+                [120 nice]
+                clear
+                [120 green]
+                clear
+                [120 calm]
+                clear
+                [50 heating]
+                [100 uh-oh]
+                clear
+                [100 too-hot]
+                [0 show-temp]
+                clear
+                [80 c-to-cool]]]
     (:ds (reduce (fn [{:keys [ds curr] :as acc}
                       [d f]]
                    (-> acc
                        (update :ds conj (delay/->delay (+ curr d) f))
                        (update :curr + d)))
-                 {:ds []
+                 {:ds   []
                   :curr initial-delay}
                  delays))))
 
+(defn hmm
+  [state]
+  (modify-text state #(assoc % :content "hmmmmm")))
+
+(defn too-cold
+  [state]
+  (modify-text state #(assoc % :content "too cold")))
+
+(defn keep-it-here
+  [{:keys [current-scene] :as state}]
+  (-> state
+      (update-in
+       [:scenes current-scene :sprites]
+       (fn [sprites]
+         (map (fn [s]
+                (if (= :thermometer (:sprite-group s))
+                  (assoc s :show-target? true)
+                  s))
+              sprites)))
+      (assoc :auto-activity? true)
+      (modify-text #(assoc % :content "try to keep it\nin the middle"))))
+
+(defn h-to-heat
+  [state]
+  (-> state
+      (assoc :fire-available? true)
+      (modify-text #(assoc % :content " hold h to \nheat up"))))
+
+(defn after-cold-delays
+  []
+  (let [delays [[150 hmm]
+                clear
+                [120 too-cold]
+                clear
+                [120 keep-it-here]
+                clear
+                [120 h-to-heat]]]
+    (:ds (reduce (fn [{:keys [ds curr] :as acc}
+                      [d f]]
+                   (-> acc
+                       (update :ds conj (delay/->delay (+ curr d) f))
+                       (update :curr + d)))
+                 {:ds   []
+                  :curr initial-delay}
+                 delays))))
+
+(defn room-temperature
+  [state]
+  (modify-text state #(assoc % :content "temperatures are\n  variable")))
+
+(defn keep-stable
+  [state]
+  (modify-text state #(assoc % :content "keep the solution\n   stable")))
+
+(defn small-temp-dec
+  [state]
+  (update state :modifiers
+          conj {:field     :temperature
+                :update-fn (fn [t]
+                             (max common/min-temperature
+                                  (min common/max-temperature
+                                       (- t 0.05))))}))
+
+(defn start-color
+  [state]
+  (assoc state :auto-color? true))
+
+(defn move-text
+  [state]
+  (modify-text state #(assoc % :pos [(* 0.7 (q/width)) (* 0.5 (q/height))])))
+
+(defn not-green
+  [state]
+  (modify-text state #(assoc % :content "not green")))
+
+(defn ah
+  [state]
+  (modify-text state #(assoc % :content "ah")))
+
+(defn ok
+  [state]
+  (modify-text state #(assoc % :content "ok")))
+
+(defn dont-worry
+  [state]
+  (modify-text state #(assoc % :content "don't worry")))
+
+(defn i-know
+  [state]
+  (modify-text state #(assoc % :content "I know\nwhat's wrong")))
+
+(defn obvious
+  [state]
+  (modify-text state #(assoc % :content "obvious really")))
+
+(defn very-simple
+  [state]
+  (modify-text state #(assoc % :content "very simple")))
+
+(defn acid
+  [state]
+  (modify-text state #(assoc % :content "too acidic")))
+
+(defn show-ph
+  [{:keys [current-scene] :as state}]
+  (update-in
+   state
+   [:scenes current-scene :sprites]
+   (fn [sprites]
+     (map (fn [s]
+            (if (= :ph-scale (:sprite-group s))
+              (qptween/add-tween
+               s
+               (qptween/->tween
+                :pos
+                -200
+                :step-count 150
+                :update-fn qptween/tween-x-fn
+                :easing-fn qptween/ease-in-elastic))
+              s))
+          sprites))))
+
+(defn balance-ph
+  [{:keys [current-scene] :as state}]
+  (-> state
+      (update-in
+       [:scenes current-scene :sprites]
+       (fn [sprites]
+         (map (fn [s]
+                (if (= :ph-scale (:sprite-group s))
+                  (assoc s :show-target? true)
+                  s))
+              sprites)))
+      (modify-text #(assoc % :content "keep pH stable"))))
+
+(defn show-droppers
+  [{:keys [current-scene] :as state}]
+  (-> state
+      (update-in
+       [:scenes current-scene :sprites]
+       (fn [sprites]
+         (map (fn [s]
+                (if (= :base (:sprite-group s))
+                  (qptween/add-tween
+                   s
+                   (qptween/->tween
+                    :pos
+                    200
+                    :step-count 150
+                    :update-fn qptween/tween-y-fn
+                    :easing-fn qptween/ease-in-elastic))
+                  s))
+              sprites)))
+      (update-in
+       [:scenes current-scene :sprites]
+       (fn [sprites]
+         (map (fn [s]
+                (if (= :acid (:sprite-group s))
+                  (qptween/add-tween
+                   s
+                   (qptween/->tween
+                    :pos
+                    200
+                    :step-count 150
+                    :update-fn qptween/tween-y-fn
+                    :easing-fn qptween/ease-in-elastic))
+                  s))
+              sprites)))))
+
+(defn add-ph-controls
+  [{:keys [current-scene] :as state}]
+  (-> state
+      (assoc :acid-available? true)
+      (assoc :base-available? true)
+      (assoc :intro? false)
+      (modify-text #(assoc % :content "press a to\n   add more acid\npress b to\n   add more base"))))
+
+(defn small-ph-inc
+  [state]
+  (update state :modifiers
+          conj {:field     :ph
+                :update-fn (fn [t]
+                             (max common/min-temperature
+                                  (min common/max-temperature
+                                       (+ t 0.05))))}))
+
+(defn after-fire-delays
+  []
+  (let [delays [[150 room-temperature]
+                clear
+                [120 keep-stable]
+                clear
+                [50 small-temp-dec]
+                [300 start-color]
+                [0 move-text]
+                [150 uh-oh]
+                clear
+                [120 not-green]
+                clear
+                [80 ah]
+                clear
+                [50 ok]
+                clear
+                [50 dont-worry]
+                clear
+                [50 i-know]
+                clear
+                [50 obvious]
+                clear
+                [50 very-simple]
+                clear
+                [50 acid]
+                [0 show-ph]
+                clear
+                [50 balance-ph]
+                clear
+                [50 show-droppers]
+                [50 add-ph-controls]
+                [80 small-ph-inc]
+                [100 identity]
+                clear]]
+    (:ds (reduce (fn [{:keys [ds curr] :as acc}
+                      [d f]]
+                   (-> acc
+                       (update :ds conj (delay/->delay (+ curr d) f))
+                       (update :curr + d)))
+                 {:ds   []
+                  :curr initial-delay}
+                 delays))))
+
+(defn check-cold-delays
+  [{:keys [after-cold? values current-scene] :as state}]
+  (if (and (not after-cold?) (< (:temperature values) 3))
+    (-> state
+        (assoc :after-cold? true)
+        (assoc-in [:scenes current-scene :delays] (after-cold-delays)))
+    state))
+
+(defn check-fire-delays
+  [{:keys [after-cold? after-fire? values current-scene] :as state}]
+  (if (and after-cold? (not after-fire?) (< 14 (:temperature values)))
+    (-> state
+        (assoc :after-fire? true)
+        (assoc-in [:scenes current-scene :delays] (after-fire-delays)))
+    state))
+
 (defn handle-acid
-  [{:keys [playing? current-scene] :as state} e]
-  (if (and playing? (= :a (:key e)))
+  [{:keys [playing? acid-available? current-scene] :as state} e]
+  (if (and playing? acid-available? (= :a (:key e)))
     (-> state
         (update-in [:values :ph] (fn [ph]
                                    (max common/min-ph
@@ -274,7 +617,7 @@
                           sprites)))
         (update-in [:scenes current-scene :delays]
                    (fn [ds]
-                     (filter #(not= :acid (:tag %)) ds)))
+                     (remove #(= :acid (:tag %)) ds)))
         (delay/add-delay 20
                          (fn [state]
                            (update-in state
@@ -289,8 +632,8 @@
     state))
 
 (defn handle-base
-  [{:keys [playing? current-scene] :as state} e]
-  (if (and playing? (= :b (:key e)))
+  [{:keys [playing? base-available? current-scene] :as state} e]
+  (if (and playing? base-available? (= :b (:key e)))
     (-> state
         (update-in [:values :ph] (fn [ph]
                                    (max common/min-ph
@@ -307,7 +650,7 @@
                           sprites)))
         (update-in [:scenes current-scene :delays]
                    (fn [ds]
-                     (filter #(not= :base (:tag %)) ds)))
+                     (remove #(= :base (:tag %)) ds)))
         (delay/add-delay 20
                          (fn [state]
                            (update-in state
