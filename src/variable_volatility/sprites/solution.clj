@@ -66,9 +66,35 @@
       (update :droplets #(map update-droplet %))
       (update :droplets update-droplet-tweens)))
 
+(defn on-complete-x
+  [{:keys [activity] :as d}]
+  (qptween/add-tween
+   d
+   (qptween/->tween
+    :pos (- (rand-int activity) (/ activity 2))
+    :step-count (int (- (+ (rand-int 10) 10) (* (/ 10 35) activity)))
+    :yoyo? true
+    :update-fn qptween/tween-x-fn
+    :yoyo-update-fn qptween/tween-x-yoyo-fn
+    :repeat-times 3
+    :on-complete-fn on-complete-x)))
+
+(defn on-complete-y
+  [{:keys [activity] :as d}]
+  (qptween/add-tween
+   d
+   (qptween/->tween
+    :pos (- (rand-int activity) (/ activity 2))
+    :step-count (int (- (+ (rand-int 10) 10) (* (/ 10 35) activity)))
+    :yoyo? true
+    :update-fn qptween/tween-y-fn
+    :yoyo-update-fn qptween/tween-y-yoyo-fn
+    :repeat-times 3
+    :on-complete-fn on-complete-y)))
+
 (defn ->droplet
   [pos w h r g b]
-  (let [activity 4]
+  (let [activity common/starting-activity]
     {:sprite-group :droplets
      :uuid         (java.util.UUID/randomUUID)
      :pos          pos
@@ -90,14 +116,16 @@
                      :yoyo? true
                      :update-fn qptween/tween-x-fn
                      :yoyo-update-fn qptween/tween-x-yoyo-fn
-                     :repeat-times ##Inf)
+                     :repeat-times 3
+                     :on-complete-fn on-complete-x)
                     (qptween/->tween
                      :pos (- (rand-int activity) (/ activity 2))
                      :step-count (+ (rand-int 10) 10)
                      :yoyo? true
                      :update-fn qptween/tween-y-fn
                      :yoyo-update-fn qptween/tween-y-yoyo-fn
-                     :repeat-times ##Inf)]}))
+                     :repeat-times 3
+                     :on-complete-fn on-complete-y)]}))
 
 (defn ->solution
   [& {:keys [rows

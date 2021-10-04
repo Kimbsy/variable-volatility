@@ -13,16 +13,17 @@
   {:values    {:temperature common/starting-temperature
                :ph          7
                :pressure    1}
-   :modifiers [{:field     :temperature
-                :update-fn (fn [t]
-                             (max common/min-temperature
-                                  (min common/max-temperature
-                                       (- t 0.1))))}
-               {:field     :ph
-                :update-fn (fn [t]
-                             (max common/min-ph
-                                  (min common/max-ph
-                                       (+ t 0.01))))}]})
+   :modifiers [;; {:field     :temperature
+               ;;  :update-fn (fn [t]
+               ;;               (max common/min-temperature
+               ;;                    (min common/max-temperature
+               ;;                         (- t 0.1))))}
+               ;; {:field     :ph
+               ;;  :update-fn (fn [t]
+               ;;               (max common/min-ph
+               ;;                    (min common/max-ph
+               ;;                         (+ t 0.01))))}
+               ]})
 
 (defn cleanup
   [state]

@@ -4,15 +4,30 @@
             [quip.utils :as qpu]
             [variable-volatility.common :as common]))
 
+(defn dy
+  [degrees]
+  (* degrees 6))
+
 (defn draw-target-zone
-  [th]
-  )
+  [{[x y] :pos :keys [w h]}]
+  (let [base-y (- (+ y (/ h 2)) 5)
+        top (- (dy common/max-temperature))]
+    (qpu/fill qpu/red)
+    (q/rect (- x 70) (+ base-y top (dy 0)) 10 (dy 7))
+    (qpu/fill common/orange)
+    (q/rect (- x 70) (+ base-y top (dy 7)) 10 (dy 7))
+    (qpu/fill common/light-green)
+    (q/rect (- x 70) (+ base-y top (dy 14)) 10 (dy 18))
+    (qpu/fill common/orange)
+    (q/rect (- x 70) (+ base-y top (dy 32)) 10 (dy 7))
+    (qpu/fill qpu/red)
+    (q/rect (- x 70) (+ base-y top (dy 39)) 10 (dy 7))))
 
 (defn draw-needle
   [{[x y] :pos :keys [w h temperature]}]
   (qpu/fill qpu/red)
   (let [base-y (- (+ y (/ h 2)) 10)
-        y-off (- (* temperature 6))]
+        y-off (- (dy temperature))]
     (q/triangle (- x (/ w 2) 3) (+ base-y y-off)
                 (+ 20 (- x (/ w 2) 3)) (+ base-y y-off 5)
                 (- x (/ w 2) 3) (+ base-y y-off 10))))

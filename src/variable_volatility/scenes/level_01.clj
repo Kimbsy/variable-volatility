@@ -96,6 +96,42 @@
              (fn [sprites]
                (map #(update-graph % values) sprites))))
 
+(defn modify-activity
+  [{:keys [current-scene] :as state} amount]
+  (update-in state [:scenes current-scene :sprites]
+             (fn [sprites]
+               (map (fn [s]
+                      (if (= :solution (:sprite-group s))
+                        (update s :droplets
+                                (fn [ds]
+                                  (map (fn [d]
+                                         (update d :activity
+                                                 (fn [a]
+                                                   (max common/min-activity
+                                                        (min common/max-activity
+                                                             (+ a (/ amount 50)))))))
+                                       ds)))
+                        s))
+                    sprites))))
+
+(defn update-solution
+  [{:keys [current-scene values] :as state}]
+  (let [temp-mod (if (< 14 (:temperature values) 32)
+                   -3 ; green
+                   (if (or (< (:temperature values) 7)
+                           (< 39 (:temperature values)))
+                     5 ; red
+                     1 ; orange
+                     ))
+        ph-mod (if (< 4 (:ph values) 10)
+                 -3 ; green
+                 (if (or (< (:ph values) 2)
+                         (< 12 (:ph values)))
+                   5 ; red
+                   1 ; orange
+                   ))]
+    (modify-activity state (+ temp-mod ph-mod))))
+
 (defn update-level-01
   [state]
   (-> state
@@ -105,6 +141,7 @@
       apply-ice
       common/update-values
       update-graphs
+      update-solution
       qpscene/update-scene-sprites
       qptween/update-sprite-tweens
       delay/update-delays))
