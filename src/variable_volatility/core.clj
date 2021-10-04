@@ -11,7 +11,7 @@
   []
   (qpsound/loop-music "music/Dance Teacher.wav")
   {:activity        common/starting-activity
-   :explosion-timer 500
+   :explosion-timer 200
    :playing?        true
    :intro?          true
    :auto-activity?  false
@@ -29,7 +29,7 @@
 (defn cleanup
   [state]
   (qpsound/stop-music)
-  #_(System/exit 0))
+  (System/exit 0))
 
 (defn init-scenes
   []

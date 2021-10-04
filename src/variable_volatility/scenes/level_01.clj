@@ -179,7 +179,7 @@
   (if (and (not intro?) (< 24 activity))
     (update state :explosion-timer dec)
     (update state :explosion-timer (fn [t]
-                                     (min 500
+                                     (min 200
                                           (+ t 0.5))))))
 
 (defn fade-to-black-explosion
@@ -540,6 +540,25 @@
                                   (min common/max-ph
                                        (+ t 0.01))))}))
 
+(defn end-game
+  [{:keys [current-scene] :as state}]
+  (let [dt (- (/ (rand) 3) 0.125)
+        dp (float(- (/ (rand) 10) 0.05))]
+    (-> state
+        (assoc :modifiers [{:field     :temperature
+                            :update-fn (fn [t]
+                                         (max common/min-temperature
+                                              (min common/max-temperature
+                                                   (+ t dt))))}
+                           {:field     :ph
+                            :update-fn (fn [p]
+                                         (max common/min-ph
+                                              (min common/max-ph
+                                                   (+ p dp))))}])
+        (delay/add-delay
+         (+ 300 (rand-int 200))
+         end-game))))
+
 (defn after-fire-delays
   []
   (let [delays [[150 room-temperature]
@@ -574,7 +593,8 @@
                 [50 add-ph-controls]
                 [80 small-ph-inc]
                 [100 identity]
-                clear]]
+                clear
+                [500 end-game]]]
     (:ds (reduce (fn [{:keys [ds curr] :as acc}
                       [d f]]
                    (-> acc

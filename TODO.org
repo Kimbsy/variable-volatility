@@ -1,7 +1,5 @@
 * THINGS TO DO
 
-** TODO add global state modifiers over time to increase difficulty
-
 ** TODO Make menu a bit jazzier
 *** make buttons start to vibrate on hover?
 *** make some of the title letters randomly explode?
@@ -73,3 +71,6 @@
 
 ** DONE include font with game
    CLOSED: [2021-10-04 Mon 19:06]
+
+** DONE add global state modifiers over time to increase difficulty
+   CLOSED: [2021-10-04 Mon 19:49]
