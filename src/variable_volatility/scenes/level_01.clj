@@ -1,6 +1,7 @@
 (ns variable-volatility.scenes.level-01
   (:require [quil.core :as q]
             [quip.scene :as qpscene]
+            [quip.sound :as qpsound]
             [quip.sprite :as qpsprite]
             [quip.tween :as qptween]
             [quip.utils :as qpu]
@@ -63,10 +64,12 @@
                          (filter #(= :fire (:sprite-group %)))
                          first)]
     (if (= :active (:current-animation fire-sprite))
-      (update-in state [:values :temperature] (fn [t]
-                                                (max common/min-temperature
-                                                     (min common/max-temperature
-                                                          (+ t 0.2)))))
+      (update-in state
+                 [:values :temperature]
+                 (fn [t]
+                   (max common/min-temperature
+                        (min common/max-temperature
+                             (+ t 0.2)))))
       state)))
 
 (defn apply-ice
@@ -75,10 +78,12 @@
                         (filter #(= :ice (:sprite-group %)))
                         first)]
     (if (= :active (:current-animation ice-sprite))
-      (update-in state [:values :temperature] (fn [t]
-                                                (max common/min-temperature
-                                                     (min common/max-temperature
-                                                          (- t 0.2)))))
+      (update-in state
+                 [:values :temperature]
+                 (fn [t]
+                   (max common/min-temperature
+                        (min common/max-temperature
+                             (- t 0.2)))))
       state)))
 
 
@@ -163,17 +168,15 @@
 
 (defn fade-to-black-explosion
   [state progress limit]
-  (when (= 140 progress)
-    ;; play explosion
-    (prn "BANG")
-    )
+  (when (= 60 progress)
+    (qpsound/play "explosion.wav"))
   (q/fill 0 (int (* 255 (/ progress limit))))
   (q/rect 0 0 (q/width) (q/height)))
 
 (defn game-end
   [{:keys [current-scene] :as state}]
-  ;; play ominous sound
-  (prn "uh oh")
+  (qpsound/stop-music)
+  (qpsound/play "siren.wav")
   (-> state
       (assoc :playing? false)
       (update-in [:scenes current-scene :sprites]
@@ -183,11 +186,16 @@
                             (apply solution/update-color s [255 255 255])
                             s))
                         sprites)))
-      (delay/add-delay 100
-                       #(qpscene/transition %
-                                            :credits
-                                            :transition-length 200
-                                            :transition-fn fade-to-black-explosion))))
+      (delay/add-delay
+       50
+       (fn [state]
+         (qpscene/transition state
+                             :credits
+                             :transition-length 200
+                             :transition-fn fade-to-black-explosion
+                             :init-fn (fn [state]
+                                        (qpsound/loop-music "music/Dance Teacher.wav")
+                                        state))))))
 
 (defn check-end
   [{:keys [explosion-timer] :as state}]
@@ -259,7 +267,9 @@
                    (fn [sprites]
                      (map (fn [s]
                             (if (= :acid (:sprite-group s))
-                              (qpsprite/set-animation s :active)
+                              (do
+                                (qpsound/play "drop.wav")
+                                (qpsprite/set-animation s :active))
                               s))
                           sprites)))
         (update-in [:scenes current-scene :delays]
@@ -290,7 +300,9 @@
                    (fn [sprites]
                      (map (fn [s]
                             (if (= :base (:sprite-group s))
-                              (qpsprite/set-animation s :active)
+                              (do
+                                (qpsound/play "drop.wav")
+                                (qpsprite/set-animation s :active))
                               s))
                           sprites)))
         (update-in [:scenes current-scene :delays]

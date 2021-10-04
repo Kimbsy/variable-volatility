@@ -4,14 +4,6 @@
 
 ** TODO add global state modifiers over time to increase difficulty
 
-** TODO make some sound effects
-*** heating
-*** cooling
-*** instability
-*** explosion
-*** glass clink(s)
-*** water drop(s)
-
 ** TODO Make menu a bit jazzier
 *** make buttons start to vibrate on hover?
 *** make some of the title letters randomly explode?
@@ -59,3 +51,10 @@
    CLOSED: [2021-10-04 Mon 11:00]
 ** DONE make going out of bounds for too long end the game
    CLOSED: [2021-10-04 Mon 11:51]
+** DONE make some sound effects
+   CLOSED: [2021-10-04 Mon 13:48]
+*** DONE heating
+*** DONE cooling
+*** DONE instability
+*** DONE explosion
+*** DONE water drop(s)

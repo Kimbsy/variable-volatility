@@ -9,7 +9,7 @@
 
 (defn setup
   []
-  ;; (qpsound/loop-music "music/Dance Teacher.wav")
+  (qpsound/loop-music "music/Dance Teacher.wav")
   {:activity        common/starting-activity
    :explosion-timer 500
    :playing?        true
@@ -46,7 +46,7 @@
     :setup          setup
     :on-close       cleanup
     :init-scenes-fn init-scenes
-    :current-scene  :level-01}))
+    :current-scene  :menu}))
 
 (defn -main
   [& args]

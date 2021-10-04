@@ -1,5 +1,6 @@
 (ns variable-volatility.sprites.fire
   (:require [quil.core :as q]
+            [quip.sound :as qpsound]
             [quip.sprite :as qpsprite]))
 
 (defn also-update-fire
@@ -8,7 +9,9 @@
         (fn [{[x y] :pos :keys [current-animation] :as fire}]
           (if (< y (* 0.85 (q/height)))
             (if (= :none current-animation)
-              (qpsprite/set-animation fire :active)
+              (do
+                (qpsound/play "fire.wav")
+                (qpsprite/set-animation fire :active))
               fire)
             (if (= :active current-animation)
               (qpsprite/set-animation fire :none)

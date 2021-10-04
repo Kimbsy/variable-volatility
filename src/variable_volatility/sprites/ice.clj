@@ -1,5 +1,6 @@
 (ns variable-volatility.sprites.ice
   (:require [quil.core :as q]
+            [quip.sound :as qpsound]
             [quip.sprite :as qpsprite]))
 
 (defn also-update-ice
@@ -8,7 +9,9 @@
         (fn [{[x y] :pos :keys [current-animation] :as ice}]
           (if (< y (* 0.85 (q/height)))
             (if (= :none current-animation)
-              (qpsprite/set-animation ice :active)
+              (do
+                (qpsound/play "ice.wav")
+                (qpsprite/set-animation ice :active))
               ice)
             (if (= :active current-animation)
               (qpsprite/set-animation ice :none)
