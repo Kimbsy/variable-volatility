@@ -114,7 +114,7 @@
                         s))
                     sprites))))
 
-(defn update-solution
+(defn update-solution-activity
   [{:keys [current-scene values] :as state}]
   (let [temp-mod (if (< 14 (:temperature values) 32)
                    -3 ; green
@@ -132,6 +132,18 @@
                    ))]
     (modify-activity state (+ temp-mod ph-mod))))
 
+(defn update-solution-color
+  [{:keys [current-scene global-frame values] :as state}]
+  (if (zero? (mod global-frame 100))
+    (update-in state [:scenes current-scene :sprites]
+               (fn [sprites]
+                 (map (fn [s]
+                        (if (= :solution (:sprite-group s))
+                          (apply solution/update-color s (common/get-ph-color values))
+                          s))
+                      sprites)))
+    state))
+
 (defn update-level-01
   [state]
   (-> state
@@ -141,15 +153,15 @@
       apply-ice
       common/update-values
       update-graphs
-      update-solution
+      update-solution-activity
+      update-solution-color
       qpscene/update-scene-sprites
       qptween/update-sprite-tweens
       delay/update-delays))
 
 (defn sprites
   []
-  [#_(apply solution/update-color (solution/->solution) common/hot-pink)
-   (acid/->acid)
+  [(acid/->acid)
    (base/->base)
    (solution/->solution)
    (ice/->ice)

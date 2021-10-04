@@ -135,9 +135,9 @@
              b]
       :or   {rows 8
              cols 4
-             r    111
-             g    45
-             b    189}}]
+             r    55
+             g    169
+             b    73}}]
   (let [[x y :as pos] [(* 0.5 (q/width)) (* 0.5 (q/height))]
         w             96
         h             244

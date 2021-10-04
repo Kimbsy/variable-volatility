@@ -2,8 +2,6 @@
 
 ** TODO make going out of bounds for too long end the game
 
-** TODO make state modify solution colour
-
 ** TODO add global state modifiers over time to increase difficulty
 
 ** TODO make some sound effects
@@ -57,3 +55,5 @@
 *** DONE temperature
 ** DONE make state modify droplet movement
    CLOSED: [2021-10-04 Mon 10:34]
+** DONE make state modify solution colour
+   CLOSED: [2021-10-04 Mon 11:00]
