@@ -38,6 +38,7 @@
       (assoc :after-fire? false)
       (assoc :values {:temperature common/starting-temperature
                       :ph          common/starting-ph})
+      (assoc :modifiers [])
       (qpscene/transition
        :menu
        :transition-length 30
@@ -45,6 +46,7 @@
                   (-> state
                       common/unclick-all-buttons
                       (assoc :held-keys #{})
+                      (assoc-in [:scenes :level-01 :delays] [])
                       (assoc-in [:scenes :level-01] (level-01/init)))))))
 
 (defn sprites
