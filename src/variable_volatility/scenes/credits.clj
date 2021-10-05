@@ -25,9 +25,17 @@
   [state e]
   (-> state
       (assoc :activity common/starting-activity)
-      (assoc :explosion-timer 500)
+      (assoc :explosion-timer 200)
       (assoc :playing? true)
       (assoc :intro? true)
+      (assoc :auto-activity? false)
+      (assoc :auto-color? false)
+      (assoc :fire-available? false)
+      (assoc :ice-available? false)
+      (assoc :acid-available? false)
+      (assoc :base-available? false)
+      (assoc :after-cold? false)
+      (assoc :after-fire? false)
       (assoc :values {:temperature common/starting-temperature
                       :ph          common/starting-ph})
       (qpscene/transition
