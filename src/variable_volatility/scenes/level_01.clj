@@ -1,12 +1,12 @@
 (ns variable-volatility.scenes.level-01
   (:require [quil.core :as q]
+            [quip.delay :as qpdelay]
             [quip.scene :as qpscene]
             [quip.sound :as qpsound]
             [quip.sprite :as qpsprite]
             [quip.tween :as qptween]
             [quip.utils :as qpu]
             [variable-volatility.common :as common]
-            [variable-volatility.delay :as delay]
             [variable-volatility.sprites.acid :as acid]
             [variable-volatility.sprites.base :as base]
             [variable-volatility.sprites.fire :as fire]
@@ -202,16 +202,17 @@
                             (apply solution/update-color s [255 255 255])
                             s))
                         sprites)))
-      (delay/add-delay
-       80
-       (fn [state]
-         (qpscene/transition state
-                             :credits
-                             :transition-length 200
-                             :transition-fn fade-to-black-explosion
-                             :init-fn (fn [state]
-                                        (qpsound/loop-music "music/Dance Teacher.wav")
-                                        state))))))
+      (qpdelay/add-delay
+       (qpdelay/->delay
+        80
+        (fn [state]
+          (qpscene/transition state
+                              :credits
+                              :transition-length 200
+                              :transition-fn fade-to-black-explosion
+                              :init-fn (fn [state]
+                                         (qpsound/loop-music "music/Dance Teacher.wav")
+                                         state)))))))
 
 (defn check-end
   [{:keys [explosion-timer] :as state}]
@@ -239,7 +240,7 @@
       check-fire-delays
       qpscene/update-scene-sprites
       qptween/update-sprite-tweens
-      delay/update-delays))
+      qpdelay/update-delays))
 
 (defn sprites
   []
@@ -330,29 +331,23 @@
 
 (defn delays
   []
-  (let [delays [[200 hello]
-                clear
-                [120 nice]
-                clear
-                [120 green]
-                clear
-                [120 calm]
-                clear
-                [50 heating]
-                [100 uh-oh]
-                clear
-                [100 too-hot]
-                [0 show-temp]
-                clear
-                [80 c-to-cool]]]
-    (:ds (reduce (fn [{:keys [ds curr] :as acc}
-                      [d f]]
-                   (-> acc
-                       (update :ds conj (delay/->delay (+ curr d) f))
-                       (update :curr + d)))
-                 {:ds   []
-                  :curr initial-delay}
-                 delays))))
+  (qpdelay/sequential-delays
+   [[200 hello]
+    clear
+    [120 nice]
+    clear
+    [120 green]
+    clear
+    [120 calm]
+    clear
+    [50 heating]
+    [100 uh-oh]
+    clear
+    [100 too-hot]
+    [0 show-temp]
+    clear
+    [80 c-to-cool]]
+   :initial-delay initial-delay))
 
 (defn hmm
   [state]
@@ -384,21 +379,15 @@
 
 (defn after-cold-delays
   []
-  (let [delays [[150 hmm]
-                clear
-                [120 too-cold]
-                clear
-                [120 keep-it-here]
-                clear
-                [120 h-to-heat]]]
-    (:ds (reduce (fn [{:keys [ds curr] :as acc}
-                      [d f]]
-                   (-> acc
-                       (update :ds conj (delay/->delay (+ curr d) f))
-                       (update :curr + d)))
-                 {:ds   []
-                  :curr initial-delay}
-                 delays))))
+  (qpdelay/sequential-delays
+   [[150 hmm]
+    clear
+    [120 too-cold]
+    clear
+    [120 keep-it-here]
+    clear
+    [120 h-to-heat]]
+   :initial-delay initial-delay))
 
 (defn room-temperature
   [state]
@@ -555,54 +544,49 @@
                                          (max common/min-ph
                                               (min common/max-ph
                                                    (+ p dp))))}])
-        (delay/add-delay
-         (+ 300 (rand-int 200))
-         end-game))))
+        (qpdelay/add-delay
+         (qpdelay/->delay
+          (+ 300 (rand-int 200))
+          end-game)))))
 
 (defn after-fire-delays
   []
-  (let [delays [[150 room-temperature]
-                clear
-                [120 keep-stable]
-                clear
-                [50 small-temp-dec]
-                [300 start-color]
-                [0 move-text]
-                [150 uh-oh]
-                clear
-                [120 not-green]
-                clear
-                [80 ah]
-                quick-clear
-                [50 ok]
-                quick-clear
-                [50 dont-worry]
-                quick-clear
-                [50 i-know]
-                quick-clear
-                [50 obvious]
-                quick-clear
-                [50 very-simple]
-                quick-clear
-                [50 acid]
-                [0 show-ph]
-                clear
-                [50 balance-ph]
-                clear
-                [50 show-droppers]
-                [50 add-ph-controls]
-                [80 small-ph-inc]
-                [100 identity]
-                clear
-                [500 end-game]]]
-    (:ds (reduce (fn [{:keys [ds curr] :as acc}
-                      [d f]]
-                   (-> acc
-                       (update :ds conj (delay/->delay (+ curr d) f))
-                       (update :curr + d)))
-                 {:ds   []
-                  :curr initial-delay}
-                 delays))))
+  (qpdelay/sequential-delays
+   [[150 room-temperature]
+    clear
+    [120 keep-stable]
+    clear
+    [50 small-temp-dec]
+    [300 start-color]
+    [0 move-text]
+    [150 uh-oh]
+    clear
+    [120 not-green]
+    clear
+    [80 ah]
+    quick-clear
+    [50 ok]
+    quick-clear
+    [50 dont-worry]
+    quick-clear
+    [50 i-know]
+    quick-clear
+    [50 obvious]
+    quick-clear
+    [50 very-simple]
+    quick-clear
+    [50 acid]
+    [0 show-ph]
+    clear
+    [50 balance-ph]
+    clear
+    [50 show-droppers]
+    [50 add-ph-controls]
+    [80 small-ph-inc]
+    [100 identity]
+    clear
+    [500 end-game]]
+   :initial-delay initial-delay))
 
 (defn check-cold-delays
   [{:keys [after-cold? values current-scene] :as state}]
@@ -640,17 +624,19 @@
         (update-in [:scenes current-scene :delays]
                    (fn [ds]
                      (remove #(= :acid (:tag %)) ds)))
-        (delay/add-delay 20
-                         (fn [state]
-                           (update-in state
-                                      [:scenes current-scene :sprites]
-                                      (fn [sprites]
-                                        (map (fn [s]
-                                               (if (= :acid (:sprite-group s))
-                                                 (qpsprite/set-animation s :none)
-                                                 s))
-                                             sprites))))
-                         :tag :acid))
+        (qpdelay/add-delay
+         (qpdelay/->delay
+          20
+          (fn [state]
+            (update-in state
+                       [:scenes current-scene :sprites]
+                       (fn [sprites]
+                         (map (fn [s]
+                                (if (= :acid (:sprite-group s))
+                                  (qpsprite/set-animation s :none)
+                                  s))
+                              sprites))))
+          :tag :acid)))
     state))
 
 (defn handle-base
@@ -673,17 +659,19 @@
         (update-in [:scenes current-scene :delays]
                    (fn [ds]
                      (remove #(= :base (:tag %)) ds)))
-        (delay/add-delay 20
-                         (fn [state]
-                           (update-in state
-                                      [:scenes current-scene :sprites]
-                                      (fn [sprites]
-                                        (map (fn [s]
-                                               (if (= :base (:sprite-group s))
-                                                 (qpsprite/set-animation s :none)
-                                                 s))
-                                             sprites))))
-                         :tag :base))
+        (qpdelay/add-delay
+         (qpdelay/->delay
+          20
+          (fn [state]
+            (update-in state
+                       [:scenes current-scene :sprites]
+                       (fn [sprites]
+                         (map (fn [s]
+                                (if (= :base (:sprite-group s))
+                                  (qpsprite/set-animation s :none)
+                                  s))
+                              sprites))))
+          :tag :base)))
     state))
 
 (defn init
